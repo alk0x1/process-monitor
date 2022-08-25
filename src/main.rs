@@ -6,7 +6,6 @@ use std::env;
 
 struct Arguments {
 	process: String,
-	network: String,
 	memory: String,
 	system: String
 }
@@ -14,17 +13,41 @@ struct Arguments {
 fn main() {
 	let args: Vec<String> = env::args().collect();
 
-	let options: Arguments = Arguments {
-		process: String::from("process-10"),
-		system: String::from("system-enable"),
-		memory: String::from("memory-enable"),
-		network: String::from("network-enable")
+	let mut options: Arguments = Arguments {
+		process: String::from("25"),
+		system: String::from("enabled"),
+		memory: String::from("enabled"),
 	};
+
+	let mut	nproc = String::from("0");
+	for (i,arg) in args.iter().enumerate() {
+		if i > 0 {
+			if *arg == String::from("-help") || *arg == String::from("help") || *arg == String::from("--help") {
+				println!("jaja eu faco esse comando");
+				return;
+			}
+			else if *arg == String::from("-s") {
+				options.system = args[i].clone();
+			} 
+			else if *arg == String::from("-m") {
+				options.memory = args[i].clone();
+			}
+			else if *arg == String::from("-p") {
+				options.process = args[i + 1].clone();
+				nproc = args[i + 1].clone();
+			}
+			else if *arg == nproc {}
+			else {
+				println!("Invalid option {}. Type 'cargo run -- -help' to see valid options.", args[i]);
+				return;
+			}
+		}
+	}
 
 	let mut sys: System = System::new_all();
 	sys.refresh_all();
 
-	print_os_status(sys, options);
+	print_os_status(sys, options); 
 }
 
 fn print_os_status(sys: System, options: Arguments) {	
@@ -40,27 +63,29 @@ fn print_os_status(sys: System, options: Arguments) {
 	println!("#                   system information                 #");
 	println!("########################################################");
 	println!();
-	// let mut table = Table::new();
+	
+
+	
 	// table.add_row(row!["total memory", sys.total_memory()]);
+	// let mut table = Table::new();
 	// table.add_row(row!["used memory", sys.used_memory()]);
 	// table.add_row(row!["total swap", sys.total_swap()]);
 	// table.add_row(row!["used swap", sys.used_swap()]);
 
-	if options.system != "system-disabled" {
+	if options.system != "-s" {
 		println!("System name:             {:?}", sys.name());
 		println!("System kernel version:   {:?}", sys.kernel_version());
 		println!("System OS version:       {:?}", sys.os_version());
 		println!("System host name:        {:?}", sys.host_name());
 		println!("N CPUs: {}", sys.cpus().len());
 	}
-	if options.memory != "memory-disabled" {
+	if options.memory != "-m" {
 		println!("total memory:            {} KB", sys.total_memory());   
 		println!("used memory:             {} KB", sys.used_memory());
 		println!("total swap:              {} KB", sys.total_swap());
 		println!("used swap:               {} KB", sys.used_swap());
 	}
 	println!();
-	
 	process_table(sys, options.process);
 }
 
