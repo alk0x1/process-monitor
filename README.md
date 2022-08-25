@@ -1,5 +1,8 @@
 # process-monitor
-A process viewer made in rust
+A process and general information viewer made with Rust
+
+![alt text](https://github.com/alk0x1/process-monitor/blob/master/terminal.png)
+
 
 ### Options
 ```bash
@@ -11,3 +14,6 @@ options:
   -p <number>   # Number of processes to show (show 25 by default)
 
 ```
+
+
+
